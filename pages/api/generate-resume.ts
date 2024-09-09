@@ -15,7 +15,7 @@ const supabase = createClient(
 );
 
 async function getKeywords(jobDescription: string, initialKeywords: string): Promise<string> {
-    let allKeywords = new Set(initialKeywords.split(',').map(k => k.trim()));
+    const allKeywords = new Set(initialKeywords.split(',').map(k => k.trim()));
     const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
