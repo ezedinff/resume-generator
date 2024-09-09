@@ -1,7 +1,19 @@
 {
     "functions": {
-        "api/*.ts": {
-            "maxDuration": 60
-        }
-    }
-}
+      "pages/api/**/*.ts": {
+        "maxDuration": 60
+      }
+    },
+    "builds": [
+      {
+        "src": "package.json",
+        "use": "@vercel/next"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/"
+      }
+    ]
+  }
