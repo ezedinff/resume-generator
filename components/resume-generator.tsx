@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useTheme } from "next-themes"
 import { Sun, Moon, Twitter, Linkedin, Github, Menu, X, Sparkles, Copy, Check, FileText, Code, ArrowRight } from "lucide-react"
 import Link from 'next/link'
+import Image from 'next/image'
 import confetti from 'canvas-confetti'
 import { toast } from '@/hooks/use-toast'
 import 'katex/dist/katex.min.css'
@@ -263,14 +264,17 @@ export default function ResumeGenerator() {
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Here&apos;s an example of what your generated resume might look like:
                       </p>
-                      <img 
-                        src="/example-resume.png" 
-                        alt="Example Resume" 
-                        className="w-full rounded-lg border border-gray-200 dark:border-gray-700 filter blur-[2px] transition-all duration-300"
-                        onError={(e) => {
-                          e.currentTarget.src = "https://via.placeholder.com/800x1000?text=Example+Resume";
-                        }}
-                      />
+                      <div className="relative w-full h-[600px]">
+                        <Image 
+                          src="/example-resume.png" 
+                          alt="Example Resume" 
+                          fill
+                          className="object-contain rounded-lg border border-gray-200 dark:border-gray-700 filter blur-[2px]transition-all duration-300"
+                          onError={(e) => {
+                            e.currentTarget.src = "https://via.placeholder.com/800x1000?text=Example+Resume";
+                          }}
+                        />
+                      </div>
                     </div>
                   </DialogContent>
                 </Dialog>
