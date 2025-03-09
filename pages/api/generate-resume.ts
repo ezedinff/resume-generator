@@ -1,18 +1,12 @@
 // pages/api/generate-resume.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from "openai";
-import { createClient } from '@supabase/supabase-js';
 import getPrompt from '@/lib/prompt';
 import aboutme from '@/lib/aboutme';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 async function getKeywords(jobDescription: string, initialKeywords: string): Promise<string> {
     const allKeywords = new Set(initialKeywords.split(',').map(k => k.trim()));
@@ -31,7 +25,7 @@ async function getKeywords(jobDescription: string, initialKeywords: string): Pro
         return Array.from(allKeywords).join(', ');
     }
 
-    return [...Array.from(allKeywords), ...response.split(',').map(k => k.trim())].join(', ');
+    return [...Array.from(allKeywords), ...response.split(',').map((k: string) => k.trim())].join(', ');
 }
 
 async function generateResume(aboutMe: string, jobDescription: string): Promise<string> {
@@ -70,30 +64,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (latexMatch && latexMatch[1]) {
         resumeLatex = latexMatch[1].trim();
       } else {
-        return res.status(500).json({ error: 'Could not extract LaTeX content from the generated resume' });
+        // If no LaTeX code block is found, return the raw content
+        console.log('No LaTeX code block found, returning raw content');
       }
 
-      // Store the LaTeX content in Supabase
-      const { data, error } = await supabase
-        .storage
-        .from('resumes')
-        .upload(`resume_${Date.now()}.tex`, resumeLatex, {
-          contentType: 'application/x-tex'
-        });
-
-      if (error) {
-        throw error;
-      }
-
-      // Get the public URL of the stored file
-      const { data: publicUrlData } = supabase
-        .storage
-        .from('resumes')
-        .getPublicUrl(data.path);
-
-      const publicUrl = publicUrlData.publicUrl;
-
-      res.status(200).json({ resumeUrl: publicUrl });
+      // Return the generated content directly to the user
+      res.status(200).json({ 
+        latex: resumeLatex,
+        rawContent: resumeLatex
+      });
     } catch (error) {
       console.error('An error occurred:', error);
       res.status(500).json({ error: 'An error occurred while generating the resume' });
