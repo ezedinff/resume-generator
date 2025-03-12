@@ -33,7 +33,7 @@ async function generateResume(aboutMe: string, jobDescription: string): Promise<
         const keywords = await getKeywords(jobDescription, '');
         const prompt = getPrompt(aboutMe, jobDescription, keywords);
         const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-2024-05-13',
+            model: 'gpt-4o-mini',
             messages: [
                 { role: "system", content: "You are a professional resume writer with expertise in LaTeX and ATS optimization." },
                 { role: "user", content: prompt }
